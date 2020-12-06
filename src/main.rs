@@ -3,6 +3,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 mod util;
 
 fn main() {
@@ -29,10 +30,16 @@ fn main() {
     let a = day4::day4(contents.clone(), 'a');
     let b = day4::day4(contents.clone(), 'b');
     println!("Day 4: A: {:?}, B: {:?}", a, b);
-    
+
     // Day 5
     let lines = util::load_strings("inputs/day5.txt");
     let a = day5::day5(&lines, 'a');
     let b = day5::day5(&lines, 'b');
     println!("Day 5: A: {:?}, B: {:?}", a, b);
+
+    // Day 6
+    let contents = util::load_contents("inputs/day6.txt");
+    let a = day6::day6(&contents, 'a');
+    let b = day6::day6(&contents, 'b');
+    println!("Day 6: A: {:?}, B: {:?}", a, b);
 }
