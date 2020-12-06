@@ -1,7 +1,11 @@
 use std::fs;
 
+pub fn load_contents(path: &str) -> String {
+    fs::read_to_string(path).expect("Something went wrong reading the file")
+}
+
 pub fn load_strings(path: &str) -> Vec<String> {
-    let contents = fs::read_to_string(path).expect("Something went wrong reading the file");
+    let contents = load_contents(path);
     let lines = contents.split("\n");
     lines.map(|x| x.trim().to_string()).collect()
 }

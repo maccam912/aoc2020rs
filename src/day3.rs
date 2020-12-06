@@ -84,7 +84,6 @@ mod tests {
         let test_input: Vec<String> = lines.map(|x| x.trim().to_string()).collect();
 
         let field: day3::Field = day3::convert_input_to_array(&test_input);
-        println!("{:?}", field);
         assert_eq!(field.get(1, 1), Some(0));
         assert_eq!(field.get(1, 2), Some(1));
         assert_eq!(field.get(12, 2), Some(1));
