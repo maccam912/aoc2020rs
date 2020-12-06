@@ -17,7 +17,7 @@ fn prod(v: &[&i64]) -> i64 {
 }
 
 pub fn day1(numbers: &[i64], count: i64) -> i64 {
-    let it = numbers.into_iter().combinations(count as usize);
+    let it = numbers.iter().combinations(count as usize);
     for set in it {
         if sum(&set) == 2020 {
             return prod(&set);

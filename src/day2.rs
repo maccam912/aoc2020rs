@@ -10,12 +10,12 @@ struct Line {
 }
 
 fn parse_rule(s: &str) -> Rule {
-    let parts: Vec<&str> = s.split(" ").collect();
-    let range: Vec<&str> = parts[0].split("-").collect();
+    let parts: Vec<&str> = s.split(' ').collect();
+    let range: Vec<&str> = parts[0].split('-').collect();
     Rule {
         lo: range[0].parse::<i64>().unwrap(),
         hi: range[1].parse::<i64>().unwrap(),
-        letter: parts[1].chars().nth(0).unwrap(),
+        letter: parts[1].chars().next().unwrap(),
     }
 }
 
@@ -23,7 +23,7 @@ fn parse_line(s: &str) -> Line {
     let parts: Vec<&str> = s.trim().split(": ").collect();
     let rule = parse_rule(parts[0]);
     Line {
-        rule: rule,
+        rule,
         password: parts[1].to_string(),
     }
 }
@@ -41,8 +41,8 @@ fn validate_b(line: &Line) -> bool {
     let chararray: Vec<char> = line.password.chars().collect();
     let p1 = chararray.get((line.rule.lo - 1) as usize);
     let p2 = chararray.get((line.rule.hi - 1) as usize);
-    return (p1.is_some() && p2.is_some())
-        && ((p1.unwrap() == &line.rule.letter) ^ (p2.unwrap() == &line.rule.letter));
+    (p1.is_some() && p2.is_some())
+        && ((p1.unwrap() == &line.rule.letter) ^ (p2.unwrap() == &line.rule.letter))
 }
 
 fn validate(line: &Line, part: char) -> bool {
@@ -55,7 +55,7 @@ fn validate(line: &Line, part: char) -> bool {
 
 pub fn day2(lines: &[String], part: char) -> i64 {
     let valid_lines: Vec<Line> = lines
-        .into_iter()
+        .iter()
         .map(|line| parse_line(line))
         .filter(|line: &Line| validate(line, part))
         .collect();

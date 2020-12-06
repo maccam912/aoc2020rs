@@ -6,13 +6,13 @@ struct Field {
 }
 
 impl Field {
-    fn get(self: &Self, x: i64, y: i64) -> Option<usize> {
+    fn get(&self, x: i64, y: i64) -> Option<usize> {
         let row: &Vec<usize> = self.data.get((y as usize) - 1)?;
         let val: &usize = row.get(((x as usize) - 1) % self.width as usize)?;
         Some(*val)
     }
 
-    fn count_path(self: &Self, x: i64, y: i64) -> Option<usize> {
+    fn count_path(&self, x: i64, y: i64) -> Option<usize> {
         let mut currx = 1;
         let mut curry = 1;
         let mut sum: usize = 0;
@@ -29,13 +29,13 @@ fn convert_input_to_array(input: &[String]) -> Field {
     let height: i64 = input.len() as i64;
     let width: i64 = input[0].len() as i64;
     let vecs: Vec<Vec<usize>> = input
-        .into_iter()
+        .iter()
         .map(|row| row.chars().map(|c| if c == '#' { 1 } else { 0 }).collect())
         .collect();
     Field {
         data: vecs,
-        width: width,
-        height: height,
+        width,
+        height,
     }
 }
 

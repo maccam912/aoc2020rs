@@ -14,14 +14,14 @@ fn get_coords(line: &str) -> Point {
         .map(|x| if x == 'B' { 1 } else { 0 })
         .zip(&factors)
         .map(|(x, y)| x * y)
-        .fold(0, |acc, x| acc + x);
+        .sum();
     let factors2: Vec<i64> = vec![4, 2, 1];
     let col: i64 = rl
         .chars()
         .map(|x| if x == 'R' { 1 } else { 0 })
         .zip(&factors2)
         .map(|(x, y)| x * y)
-        .fold(0, |acc, x| acc + x);
+        .sum();
     Point { row, col }
 }
 
@@ -32,13 +32,13 @@ fn get_seat_id(line: &str) -> i64 {
 
 fn day5a(lines: &[String]) -> i64 {
     lines
-        .into_iter()
+        .iter()
         .map(|line| get_seat_id(line))
         .fold(0, |acc, x| if x > acc { x } else { acc })
 }
 
 fn day5b(lines: &[String]) -> i64 {
-    let seat_ids: Vec<i64> = lines.into_iter().map(|line| get_seat_id(line)).collect();
+    let seat_ids: Vec<i64> = lines.iter().map(|line| get_seat_id(line)).collect();
     let min = seat_ids
         .clone()
         .into_iter()

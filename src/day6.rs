@@ -10,7 +10,7 @@ fn split_groups(contents: &str) -> Vec<String> {
 fn make_set_union(answers: &str) -> HashSet<char> {
     let mut answerset: HashSet<char> = HashSet::new();
     for c in answers.chars() {
-        if c >= 'a' && c <= 'z' {
+        if ('a'..='z').contains(&c) {
             answerset.insert(c);
         }
     }
@@ -18,7 +18,7 @@ fn make_set_union(answers: &str) -> HashSet<char> {
 }
 
 fn make_set_intersection(answers: &str) -> HashSet<char> {
-    let people = answers.split("\n");
+    let people = answers.split('\n');
     let numpeople = people.clone().count();
     let mut answer: HashMap<char, i64> = HashMap::new();
     for person in people {
@@ -42,7 +42,7 @@ fn day6a(contents: &str) -> i64 {
     let groups = split_groups(contents);
     let answersets = groups.into_iter().map(|g| make_set_union(&g));
     let counts = answersets.map(|set| set.len());
-    let sum = counts.fold(0, |acc, x| acc + x);
+    let sum: usize = counts.sum();
     sum as i64
 }
 
@@ -50,7 +50,7 @@ fn day6b(contents: &str) -> i64 {
     let groups = split_groups(contents);
     let answersets = groups.into_iter().map(|g| make_set_intersection(&g));
     let counts = answersets.map(|set| set.len());
-    let sum = counts.fold(0, |acc, x| acc + x);
+    let sum: usize = counts.sum();
     sum as i64
 }
 

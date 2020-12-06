@@ -28,7 +28,7 @@ fn main() {
     // Day 4
     let contents = util::load_contents("inputs/day4.txt");
     let a = day4::day4(contents.clone(), 'a');
-    let b = day4::day4(contents.clone(), 'b');
+    let b = day4::day4(contents, 'b');
     println!("Day 4: A: {:?}, B: {:?}", a, b);
 
     // Day 5

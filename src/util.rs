@@ -6,7 +6,7 @@ pub fn load_contents(path: &str) -> String {
 
 pub fn load_strings(path: &str) -> Vec<String> {
     let contents = load_contents(path);
-    let lines = contents.split("\n");
+    let lines = contents.split('\n');
     lines.map(|x| x.trim().to_string()).collect()
 }
 

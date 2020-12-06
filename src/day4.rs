@@ -23,16 +23,14 @@ fn parse_doc(doc: &str) -> Option<Document> {
     let mut fields: HashMap<&str, String> = HashMap::new();
     doc.split_whitespace()
         .filter(|field| field.contains(':'))
-        .map(|field| {
-            let parts: Vec<&str> = field.split(":").collect();
-            fields.insert(parts[0], parts[1].to_string())
-        })
-        .count();
+        .for_each(|field| {
+            let parts: Vec<&str> = field.split(':').collect();
+            fields.insert(parts[0], parts[1].to_string());
+        });
     let _cid = fields.get("cid");
-    let cid: Option<String> = if _cid.is_some() {
-        Some((_cid.unwrap()).clone())
-    } else {
-        None
+    let cid = match _cid {
+        Some(cid) => Some(cid.clone()),
+        None => None,
     };
 
     let doc = Document {
@@ -43,7 +41,7 @@ fn parse_doc(doc: &str) -> Option<Document> {
         hcl: fields.get("hcl")?.clone(),
         ecl: fields.get("ecl")?.clone(),
         pid: fields.get("pid")?.clone(),
-        cid: cid,
+        cid,
     };
     Some(doc)
 }
@@ -69,8 +67,8 @@ fn validate_hgt(doc: &Document) -> bool {
     }
     let num = _num.unwrap();
     match unit {
-        "cm" => num >= 150 && num <= 193,
-        "in" => num >= 59 && num <= 76,
+        "cm" => (150..=193).contains(&num),
+        "in" => (59..=76).contains(&num),
         _ => false,
     }
 }
@@ -82,16 +80,7 @@ fn validate_hcl(doc: &Document) -> bool {
 
 fn validate_ecl(doc: &Document) -> bool {
     let ecl: &str = &doc.ecl;
-    match ecl {
-        "amb" => true,
-        "blu" => true,
-        "brn" => true,
-        "gry" => true,
-        "grn" => true,
-        "hzl" => true,
-        "oth" => true,
-        _ => false,
-    }
+    matches!(ecl, "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth")
 }
 
 fn validate_pid(doc: &Document) -> bool {
@@ -110,18 +99,15 @@ fn validate(doc: &Document) -> bool {
 fn day4a(contents: String) -> usize {
     let docstrings = split_documents(&contents);
     let docs: Vec<Option<Document>> = docstrings.into_iter().map(|doc| parse_doc(&doc)).collect();
-    let valid_docs_num = docs.into_iter().filter(|doc| doc.is_some()).count();
-    valid_docs_num
+    docs.into_iter().filter(|doc| doc.is_some()).count()
 }
 
 fn day4b(contents: String) -> usize {
     let docstrings = split_documents(&contents);
     let docs: Vec<Option<Document>> = docstrings.into_iter().map(|doc| parse_doc(&doc)).collect();
-    let valid_docs_num = docs
-        .into_iter()
+    docs.into_iter()
         .filter(|doc| doc.is_some() && validate(doc.as_ref().unwrap()))
-        .count();
-    valid_docs_num
+        .count()
 }
 
 pub fn day4(contents: String, part: char) -> usize {
