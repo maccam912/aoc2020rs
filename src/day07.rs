@@ -57,7 +57,6 @@ fn get_num_descendents(rules: &HashMap<String, HashMap<String, i64>>, color: &st
         let mut sum = 0;
         for (k, v) in rule {
             let d = get_num_descendents(rules, k);
-            //println!("{:?} contains {:?} {:?}, each containing {:?}.", color, v, k, d);
             sum += v * d;
         }
         sum + 1
