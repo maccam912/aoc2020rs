@@ -55,7 +55,7 @@ impl World {
         self.field.get(idx)
     }
 
-    fn get_neighbors_a(&self, x: usize, y: usize) -> Vec<&WorldCell> {
+    fn get_neighbors(&self, x: usize, y: usize) -> Vec<&WorldCell> {
         let mut neighbors = Vec::new();
         for xx in (x as i64) - 1..=(x as i64) + 1 {
             for yy in (y as i64) - 1..=(y as i64) + 1 {
@@ -73,15 +73,11 @@ impl World {
         neighbors
     }
 
-    fn step(&mut self, part: char) {
+    fn step(&mut self) {
         let mut newfield = Vec::new();
         for row in 0..self.height {
             for col in 0..self.width {
-                let n = match part {
-                    'a' => self.get_neighbors_a(col, row),
-                    //'b' => self.get_neighbors_b(col, row),
-                    _ => panic!("Not part a or b? What's wrong with you?"),
-                };
+                let n = self.get_neighbors(col, row);
                 let occupiedcount = n.iter().filter(|x| x.state == CellState::Occupied).count();
                 let currentstate = self.get_cell(col, row).unwrap();
                 if occupiedcount == 0 && currentstate.state == CellState::Free {
@@ -102,10 +98,10 @@ impl World {
         self.field = newfield;
     }
 
-    fn run(&mut self, part: char) {
+    fn run(&mut self) {
         loop {
             let currstate: &[WorldCell] = &self.field.clone();
-            self.step(part);
+            self.step();
             let newstate: &[WorldCell] = &self.field;
 
             if currstate == newstate {
@@ -148,7 +144,7 @@ fn make_world(lines: &[String]) -> World {
 
 fn day11a(lines: &[String]) -> i64 {
     let mut world = make_world(&lines);
-    world.run('a');
+    world.run();
     world.count_occupied()
 }
 
@@ -196,14 +192,14 @@ mod tests {
         assert!(world2.get_cell(1, 5).is_some());
         assert!(world2.get_cell(5, 1).is_none());
 
-        let neighbors = world.get_neighbors_a(0, 0);
+        let neighbors = world.get_neighbors(0, 0);
         assert_eq!(
             neighbors[0],
             &day11::WorldCell {
                 state: day11::CellState::Free
             }
         );
-        let neighbors2 = world.get_neighbors_a(5, 8);
+        let neighbors2 = world.get_neighbors(5, 8);
         for n in neighbors2 {
             assert_eq!(
                 n,
@@ -213,15 +209,15 @@ mod tests {
             );
         }
 
-        world.step('a');
-        let neighbors = world.get_neighbors_a(0, 0);
+        world.step();
+        let neighbors = world.get_neighbors(0, 0);
         assert_eq!(
             neighbors[0],
             &day11::WorldCell {
                 state: day11::CellState::Occupied
             }
         );
-        let neighbors2 = world.get_neighbors_a(5, 8);
+        let neighbors2 = world.get_neighbors(5, 8);
         for n in neighbors2 {
             assert_eq!(
                 n,
