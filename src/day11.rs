@@ -79,54 +79,15 @@ impl World {
             for dist in 1..=maxdist {
                 // overkill on max distance, but we need to at least go far enough
                 let offset: (i64, i64) = (dir.0 * dist, dir.1 * dist);
-                //println!("Point {:?},{:?}: Dist {:?}, offset {:?}", x, y, dist, offset);
                 let cell_in_question = ((x as i64) + offset.0, (y as i64) + offset.1);
                 if let Some(c) = self.get_cell(cell_in_question.0, cell_in_question.1) {
-                    if c.state == CellState::Occupied {
+                    if c.state != CellState::Floor {
                         neighbors.push(c.clone());
+                        break;
                     }
                 }
             }
         }
-        neighbors
-    }
-
-    fn old_get_neighbors(&self, x: usize, y: usize, part: char) -> Vec<&WorldCell> {
-        let mut neighbors = Vec::new();
-        for xx in (x as i64) - 1..=(x as i64) + 1 {
-            let xdir = xx - (x as i64);
-            for yy in (y as i64) - 1..=(y as i64) + 1 {
-                let ydir = yy - (y as i64);
-                if (0..self.width).contains(&(xx as usize))
-                    && (0..self.height).contains(&(yy as usize))
-                    && !(xx == (x as i64) && yy == (y as i64))
-                {
-                    let mut cell = self.get_cell(xx, yy);
-                    if let Some(c) = cell {
-                        if c.state == CellState::Occupied {
-                            neighbors.push(c);
-                        }
-                    }
-                    if part == 'b' && cell.is_some() && cell.unwrap().state != CellState::Occupied {
-                        let mut newx = (x as i64) + xdir;
-                        let mut newy = (y as i64) + ydir;
-                        cell = self.get_cell(newx, newy);
-                        while cell.is_some() {
-                            if cell.unwrap().state == CellState::Occupied {
-                                neighbors.push(cell.unwrap());
-                                break;
-                            }
-                            newx += xdir;
-                            newy += ydir;
-                            println!("{}/{}, {},{}: {} {}", x, y, xdir, ydir, newx, newy);
-                            // Get cell one further away
-                            cell = self.get_cell(newx, newy);
-                        }
-                    }
-                }
-            }
-        }
-        println!("{:?}", neighbors);
         neighbors
     }
 
@@ -166,7 +127,6 @@ impl World {
         loop {
             let currstate: &[WorldCell] = &self.field.clone();
             self.step(part);
-            println!("\n{}\n", self);
             let newstate: &[WorldCell] = &self.field;
 
             if currstate == newstate {
@@ -265,7 +225,13 @@ mod tests {
         assert!(world2.get_cell(5, 1).is_none());
 
         let neighbors = world.get_neighbors(0, 0, 'a');
-        assert_eq!(neighbors.len(), 0);
+        assert_eq!(
+            neighbors
+                .iter()
+                .filter(|x| x.state == day11::CellState::Occupied)
+                .count(),
+            0
+        );
         let neighbors2 = world.get_neighbors(5, 8, 'a');
         for n in neighbors2 {
             assert_eq!(
@@ -296,8 +262,6 @@ mod tests {
 
         assert_eq!(day11::day11a(&lines), 37);
         assert_eq!(day11::day11a(&lines2), 12);
-
-        //let mut world1again = day11::make_world(&lines);
         assert_eq!(day11::day11b(&lines), 26);
     }
 }

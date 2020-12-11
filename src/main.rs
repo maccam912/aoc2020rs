@@ -75,5 +75,6 @@ fn main() {
     // Day 11
     let lines = util::load_strings("inputs/day11.txt");
     let a = day11::day11(&lines, 'a');
-    println!("Day 11: A: {:?}", a);
+    let b = day11::day11(&lines, 'b');
+    println!("Day 11: A: {:?}, B: {:?}", a, b);
 }
