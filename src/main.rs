@@ -1,4 +1,5 @@
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -63,4 +64,10 @@ fn main() {
     let a = day9::day9(&nums, 'a');
     let b = day9::day9(&nums, 'b');
     println!("Day 9: A: {:?}, B: {:?}", a, b);
+
+    // Day 10
+    let nums = util::load_nums("inputs/day10.txt");
+    let a = day10::day10(&nums, 'a');
+    let b = day10::day10(&nums, 'b');
+    println!("Day 10: A: {:?}, B: {:?}", a, b);
 }
