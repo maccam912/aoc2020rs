@@ -64,13 +64,13 @@ fn get_num_descendents(rules: &HashMap<String, HashMap<String, i64>>, color: &st
     }
 }
 
-fn day7a(lines: &[String]) -> i64 {
+fn day07a(lines: &[String]) -> i64 {
     let rules: Vec<Rule> = lines.iter().map(|x| parse_rule(x)).collect();
     let allancestors = find_ancestors(&rules, "shiny gold".to_string());
     allancestors.len() as i64
 }
 
-fn day7b(lines: &[String]) -> i64 {
+fn day07b(lines: &[String]) -> i64 {
     let rules: Vec<Rule> = lines.iter().map(|x| parse_rule(x)).collect();
     let mut rulesmap = HashMap::new();
     for rule in rules {
@@ -79,17 +79,17 @@ fn day7b(lines: &[String]) -> i64 {
     get_num_descendents(&rulesmap, "shiny gold") - 1
 }
 
-pub fn day7(lines: &[String], part: char) -> i64 {
+pub fn day07(lines: &[String], part: char) -> i64 {
     match part {
-        'a' => day7a(lines),
-        'b' => day7b(lines),
+        'a' => day07a(lines),
+        'b' => day07b(lines),
         _ => 0,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day7;
+    use crate::day07;
 
     #[test]
     fn test_case() {
@@ -103,8 +103,8 @@ mod tests {
         faded blue bags contain no other bags.
         dotted black bags contain no other bags.";
         let lines: Vec<String> = input.split('\n').map(|x| x.to_string()).collect();
-        assert_eq!(day7::day7a(&lines), 4);
-        assert_eq!(day7::day7b(&lines), 32);
+        assert_eq!(day07::day07a(&lines), 4);
+        assert_eq!(day07::day07b(&lines), 32);
 
         let input2 = "shiny gold bags contain 2 dark red bags.
         dark red bags contain 2 dark orange bags.
@@ -114,6 +114,6 @@ mod tests {
         dark blue bags contain 2 dark violet bags.
         dark violet bags contain no other bags.";
         let lines: Vec<String> = input2.split('\n').map(|x| x.to_string()).collect();
-        assert_eq!(day7::day7b(&lines), 126);
+        assert_eq!(day07::day07b(&lines), 126);
     }
 }

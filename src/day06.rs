@@ -38,7 +38,7 @@ fn make_set_intersection(answers: &str) -> HashSet<char> {
     answerset
 }
 
-fn day6a(contents: &str) -> i64 {
+fn day06a(contents: &str) -> i64 {
     let groups = split_groups(contents);
     let answersets = groups.into_iter().map(|g| make_set_union(&g));
     let counts = answersets.map(|set| set.len());
@@ -46,7 +46,7 @@ fn day6a(contents: &str) -> i64 {
     sum as i64
 }
 
-fn day6b(contents: &str) -> i64 {
+fn day06b(contents: &str) -> i64 {
     let groups = split_groups(contents);
     let answersets = groups.into_iter().map(|g| make_set_intersection(&g));
     let counts = answersets.map(|set| set.len());
@@ -54,16 +54,16 @@ fn day6b(contents: &str) -> i64 {
     sum as i64
 }
 
-pub fn day6(contents: &str, part: char) -> i64 {
+pub fn day06(contents: &str, part: char) -> i64 {
     match part {
-        'a' => day6a(contents),
-        'b' => day6b(contents),
+        'a' => day06a(contents),
+        'b' => day06b(contents),
         _ => 0,
     }
 }
 #[cfg(test)]
 mod tests {
-    use crate::day6;
+    use crate::day06;
     use std::collections::HashSet;
 
     #[test]
@@ -76,7 +76,7 @@ mod tests {
             abcxyz.insert(c);
         }
 
-        assert_eq!(abcxyz, day6::make_set_union(input));
+        assert_eq!(abcxyz, day06::make_set_union(input));
 
         let newinput = "abc
 
@@ -94,9 +94,9 @@ mod tests {
         
         b";
 
-        let ansa = day6::day6a(newinput);
+        let ansa = day06::day06a(newinput);
         assert_eq!(ansa, 11);
-        let ansb = day6::day6b(newinput);
+        let ansb = day06::day06b(newinput);
         assert_eq!(ansb, 6);
     }
 }

@@ -31,7 +31,7 @@ fn find_contiguous_sum(nums: &[i64], target: i64) -> Vec<i64> {
     vec![]
 }
 
-fn day9a(nums: &[i64], preamblelen: usize) -> i64 {
+fn day09a(nums: &[i64], preamblelen: usize) -> i64 {
     let mut v = prep(nums, preamblelen);
     for num in nums.iter().skip(preamblelen) {
         if !is_valid(*num, &v) {
@@ -44,26 +44,26 @@ fn day9a(nums: &[i64], preamblelen: usize) -> i64 {
     0
 }
 
-fn day9b(nums: &[i64], preamblelen: usize) -> i64 {
-    let invalid_num = day9a(nums, preamblelen);
+fn day09b(nums: &[i64], preamblelen: usize) -> i64 {
+    let invalid_num = day09a(nums, preamblelen);
     let mut v = find_contiguous_sum(nums, invalid_num);
     v.sort_unstable();
     v[0] + v[v.len() - 1]
 }
 
-pub fn day9(nums: &[i64], part: char) -> i64 {
+pub fn day09(nums: &[i64], part: char) -> i64 {
     match part {
-        'a' => day9a(nums, 25),
-        'b' => day9b(nums, 25),
+        'a' => day09a(nums, 25),
+        'b' => day09b(nums, 25),
         _ => 0,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use day9::find_contiguous_sum;
+    use day09::find_contiguous_sum;
 
-    use crate::day9;
+    use crate::day09;
 
     #[test]
     fn test_case() {
@@ -92,9 +92,9 @@ mod tests {
             .map(|x| x.trim().parse::<i64>().unwrap())
             .collect();
 
-        let v = day9::prep(&nums, 5);
-        assert!(day9::is_valid(40, &v));
-        assert_eq!(day9::day9a(&nums, 5), 127);
+        let v = day09::prep(&nums, 5);
+        assert!(day09::is_valid(40, &v));
+        assert_eq!(day09::day09a(&nums, 5), 127);
 
         assert_eq!(find_contiguous_sum(&nums, 127), vec![15, 25, 47, 40]);
     }

@@ -53,7 +53,7 @@ fn validate(line: &Line, part: char) -> bool {
     }
 }
 
-pub fn day2(lines: &[String], part: char) -> i64 {
+pub fn day02(lines: &[String], part: char) -> i64 {
     let valid_lines: Vec<Line> = lines
         .iter()
         .map(|line| parse_line(line))
@@ -64,7 +64,7 @@ pub fn day2(lines: &[String], part: char) -> i64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::day2;
+    use crate::day02;
 
     #[test]
     fn test_case() {
@@ -74,9 +74,9 @@ mod tests {
             .split("\n")
             .map(|s| s.to_string())
             .collect();
-        let ansa = day2::day2(&text, 'a');
+        let ansa = day02::day02(&text, 'a');
         assert_eq!(2, ansa);
-        let ansb = day2::day2(&text, 'b');
+        let ansb = day02::day02(&text, 'b');
         assert_eq!(1, ansb);
     }
 }

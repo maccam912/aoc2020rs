@@ -51,7 +51,7 @@ fn parse_line(line: &str) -> Result<Inst, Box<dyn std::error::Error>> {
     })
 }
 
-fn day8a(lines: &[String]) -> i64 {
+fn day08a(lines: &[String]) -> i64 {
     let instructions: Vec<Inst> = lines.iter().map(|line| parse_line(line).unwrap()).collect();
     let mut vm = VM {
         instructions,
@@ -77,7 +77,7 @@ fn fix_inst(is: &[Inst], linenum: usize) -> Vec<Inst> {
     newinst
 }
 
-fn day8b(lines: &[String]) -> i64 {
+fn day08b(lines: &[String]) -> i64 {
     let instructions: Vec<Inst> = lines.iter().map(|line| parse_line(line).unwrap()).collect();
     let instlen = lines.len();
     for fixline in 0..instlen {
@@ -100,33 +100,33 @@ fn day8b(lines: &[String]) -> i64 {
     0
 }
 
-pub fn day8(lines: &[String], part: char) -> i64 {
+pub fn day08(lines: &[String], part: char) -> i64 {
     match part {
-        'a' => day8a(lines),
-        'b' => day8b(lines),
+        'a' => day08a(lines),
+        'b' => day08b(lines),
         _ => 0,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day8;
+    use crate::day08;
     #[test]
     fn test_case() {
         let test_inst = "acc +1";
         assert_eq!(
-            day8::parse_line(test_inst).unwrap(),
-            day8::Inst {
-                op: day8::Op::ACC,
+            day08::parse_line(test_inst).unwrap(),
+            day08::Inst {
+                op: day08::Op::ACC,
                 arg: 1,
                 runcount: 0
             }
         );
         let test_inst_neg = "jmp -1";
         assert_eq!(
-            day8::parse_line(test_inst_neg).unwrap(),
-            day8::Inst {
-                op: day8::Op::JMP,
+            day08::parse_line(test_inst_neg).unwrap(),
+            day08::Inst {
+                op: day08::Op::JMP,
                 arg: -1,
                 runcount: 0
             }
@@ -143,9 +143,9 @@ mod tests {
         acc +6";
 
         let lines: Vec<String> = input.split('\n').map(|line| line.to_string()).collect();
-        let day8a = day8::day8a(&lines);
-        assert_eq!(day8a, 5);
-        let day8b = day8::day8b(&lines);
-        assert_eq!(day8b, 8);
+        let day08a = day08::day08a(&lines);
+        assert_eq!(day08a, 5);
+        let day08b = day08::day08b(&lines);
+        assert_eq!(day08b, 8);
     }
 }

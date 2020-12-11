@@ -96,13 +96,13 @@ fn validate(doc: &Document) -> bool {
         && validate_pid(doc)
 }
 
-fn day4a(contents: String) -> usize {
+fn day04a(contents: String) -> usize {
     let docstrings = split_documents(&contents);
     let docs: Vec<Option<Document>> = docstrings.into_iter().map(|doc| parse_doc(&doc)).collect();
     docs.into_iter().filter(|doc| doc.is_some()).count()
 }
 
-fn day4b(contents: String) -> usize {
+fn day04b(contents: String) -> usize {
     let docstrings = split_documents(&contents);
     let docs: Vec<Option<Document>> = docstrings.into_iter().map(|doc| parse_doc(&doc)).collect();
     docs.into_iter()
@@ -110,17 +110,17 @@ fn day4b(contents: String) -> usize {
         .count()
 }
 
-pub fn day4(contents: String, part: char) -> usize {
+pub fn day04(contents: String, part: char) -> usize {
     match part {
-        'a' => day4a(contents),
-        'b' => day4b(contents),
+        'a' => day04a(contents),
+        'b' => day04b(contents),
         _ => 0,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day4;
+    use crate::day04;
 
     #[test]
     fn test_case() {
@@ -138,12 +138,12 @@ mod tests {
         hcl:#cfa07d eyr:2025 pid:166559648
         iyr:2011 ecl:brn hgt:59in";
 
-        let docstrings = day4::split_documents(&test_input);
+        let docstrings = day04::split_documents(&test_input);
         assert_eq!(docstrings.len(), 4);
 
-        let docs: Vec<Option<day4::Document>> = docstrings
+        let docs: Vec<Option<day04::Document>> = docstrings
             .into_iter()
-            .map(|doc| day4::parse_doc(&doc))
+            .map(|doc| day04::parse_doc(&doc))
             .collect();
         let valid_docs_num = docs.into_iter().filter(|doc| doc.is_some()).count();
         assert_eq!(valid_docs_num, 2);

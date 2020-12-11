@@ -39,12 +39,12 @@ fn convert_input_to_array(input: &[String]) -> Field {
     }
 }
 
-fn day3a(lines: &[String]) -> usize {
+fn day03a(lines: &[String]) -> usize {
     let field = convert_input_to_array(lines);
     field.count_path(3, 1).unwrap()
 }
 
-fn day3b(lines: &[String]) -> usize {
+fn day03b(lines: &[String]) -> usize {
     let field = convert_input_to_array(lines);
     let mut prod = 1;
     prod *= field.count_path(1, 1).unwrap();
@@ -55,17 +55,17 @@ fn day3b(lines: &[String]) -> usize {
     prod
 }
 
-pub fn day3(lines: &[String], part: char) -> usize {
+pub fn day03(lines: &[String], part: char) -> usize {
     match part {
-        'a' => day3a(lines),
-        'b' => day3b(lines),
+        'a' => day03a(lines),
+        'b' => day03b(lines),
         _ => 0,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day3;
+    use crate::day03;
 
     #[test]
     fn test_case() {
@@ -83,14 +83,14 @@ mod tests {
         let lines = raw_test_input.split("\n");
         let test_input: Vec<String> = lines.map(|x| x.trim().to_string()).collect();
 
-        let field: day3::Field = day3::convert_input_to_array(&test_input);
+        let field: day03::Field = day03::convert_input_to_array(&test_input);
         assert_eq!(field.get(1, 1), Some(0));
         assert_eq!(field.get(1, 2), Some(1));
         assert_eq!(field.get(12, 2), Some(1));
 
         assert_eq!(field.count_path(3, 1), Some(7));
 
-        assert_eq!(day3::day3a(&test_input), 7);
-        assert_eq!(day3::day3b(&test_input), 336);
+        assert_eq!(day03::day03a(&test_input), 7);
+        assert_eq!(day03::day03b(&test_input), 336);
     }
 }

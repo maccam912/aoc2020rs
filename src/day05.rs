@@ -30,14 +30,14 @@ fn get_seat_id(line: &str) -> i64 {
     p.row * 8 + p.col
 }
 
-fn day5a(lines: &[String]) -> i64 {
+fn day05a(lines: &[String]) -> i64 {
     lines
         .iter()
         .map(|line| get_seat_id(line))
         .fold(0, |acc, x| if x > acc { x } else { acc })
 }
 
-fn day5b(lines: &[String]) -> i64 {
+fn day05b(lines: &[String]) -> i64 {
     let seat_ids: Vec<i64> = lines.iter().map(|line| get_seat_id(line)).collect();
     let min = seat_ids
         .clone()
@@ -60,23 +60,23 @@ fn day5b(lines: &[String]) -> i64 {
     0
 }
 
-pub fn day5(lines: &[String], part: char) -> i64 {
+pub fn day05(lines: &[String], part: char) -> i64 {
     match part {
-        'a' => day5a(lines),
-        'b' => day5b(lines),
+        'a' => day05a(lines),
+        'b' => day05b(lines),
         _ => 0,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day5;
+    use crate::day05;
 
     #[test]
     fn test_case() {
-        assert_eq!(day5::get_seat_id("FBFBBFFRLR"), 357);
-        assert_eq!(day5::get_seat_id("BFFFBBFRRR"), 567);
-        assert_eq!(day5::get_seat_id("FFFBBBFRRR"), 119);
-        assert_eq!(day5::get_seat_id("BBFFBBFRLL"), 820);
+        assert_eq!(day05::get_seat_id("FBFBBFFRLR"), 357);
+        assert_eq!(day05::get_seat_id("BFFFBBFRRR"), 567);
+        assert_eq!(day05::get_seat_id("FFFBBBFRRR"), 119);
+        assert_eq!(day05::get_seat_id("BBFFBBFRLL"), 820);
     }
 }

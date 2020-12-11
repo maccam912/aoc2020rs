@@ -16,7 +16,7 @@ fn prod(v: &[&i64]) -> i64 {
     prod
 }
 
-pub fn day1(numbers: &[i64], count: i64) -> i64 {
+pub fn day01(numbers: &[i64], count: i64) -> i64 {
     let it = numbers.iter().combinations(count as usize);
     for set in it {
         if sum(&set) == 2020 {
@@ -28,12 +28,12 @@ pub fn day1(numbers: &[i64], count: i64) -> i64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::day1;
+    use crate::day01;
 
     #[test]
     fn test_case() {
         let nums = vec![1721, 979, 366, 299, 675, 1456];
-        assert_eq!(day1::day1(&nums, 2), 514579 as i64);
-        assert_eq!(day1::day1(&nums, 3), 241861950 as i64);
+        assert_eq!(day01::day01(&nums, 2), 514579 as i64);
+        assert_eq!(day01::day01(&nums, 3), 241861950 as i64);
     }
 }
