@@ -286,11 +286,11 @@ mod tests {
 
     #[test]
     fn test_case() {
-        let grid = RefCell::new(InfiniteField4d::<i64>::new());
-        let answers: RefCell<HashMap<(isize, isize, isize, isize), i64>> =
+        let grid = RefCell::new(InfiniteField4d::<i8>::new());
+        let answers: RefCell<HashMap<(isize, isize, isize, isize), i8>> =
             RefCell::new(HashMap::new());
 
-        proptest!(|(x in -10isize..10, y in -10isize..10, z in -10isize..10, w in -10isize..10, v in -42i64..42)| {
+        proptest!(|(x in -100isize..100, y in -100isize..100, z in -100isize..100, w in -100isize..100, v in -8i8..8)| {
             grid.borrow_mut().set(x, y, z, w, v);
 
             prop_assert!(grid.borrow().xlims.0 <= x as i64);
