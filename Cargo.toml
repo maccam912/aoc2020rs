@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 itertools = "0.9"
 regex = { version = "1.4", features = ["pattern"] }
+proptest = "0.10.1"
 
 [profile.release]
 debug = true

@@ -284,4 +284,3 @@ nearby tickets:
         day16::day16b(&input2);
     }
 }
-
