@@ -15,6 +15,7 @@ mod day14;
 mod day15;
 mod day16;
 mod day17;
+mod infinite_field_3d;
 mod util;
 
 fn main() {
@@ -110,9 +111,16 @@ fn main() {
     println!("Day 15: A: {:?}, B: {:?}", a, b);
 
     // Day 16
-    let lines = util::load_contents("inputs/day16.txt");
-    let a = day16::day16(&lines, 'a');
+    let contents = util::load_contents("inputs/day16.txt");
+    let a = day16::day16(&contents, 'a');
     //let b = day16::day16(&lines, 'b');
     let b = a;
     println!("Day 16: A: {:?}, B: {:?}", a, b);
+
+    // Day 17
+    let contents = util::load_contents("inputs/day17.txt");
+    let a = day17::day17(&contents, 'a');
+    //let b = day16::day16(&lines, 'b');
+    let b = a;
+    println!("Day 17: A: {:?}, B: {:?}", a, b);
 }

@@ -1,139 +1,82 @@
-#[derive(Clone)]
-struct Quad3d<T> {
-    field: Vec<T>,
-    xsize: usize,
-    ysize: usize,
-    zsize: usize,
-}
+use crate::infinite_field_3d::InfiniteField3d;
 
-impl<T: Default + Copy> Quad3d<T> {
-    pub fn new() -> Self {
-        Self {
-            field: vec![],
-            xsize: 0,
-            ysize: 0,
-            zsize: 0,
-        }
-    }
-
-    pub fn get(&self, x: usize, y: usize, z: usize) -> T {
-        if x >= self.xsize || y >= self.ysize || z >= self.zsize {
-            T::default()
-        } else {
-            // In bounds, get val
-            let idx = z * (self.xsize * self.ysize) + y * self.xsize + x;
-            self.field[idx]
-        }
-    }
-
-    pub fn set(&mut self, x: usize, y: usize, z: usize, val: T) {
-        // Expand in Z direction
-        if z >= self.zsize {
-            let newsize = self.xsize * self.ysize * (z + 1);
-            let oldsize = self.xsize * self.ysize * self.zsize;
-            let diff = newsize - oldsize;
-            self.field.extend(vec![T::default(); diff]);
-            self.zsize = z + 1;
-        }
-        // Expand in y direction
-        if y >= self.ysize {
-            let newsize = self.xsize * (y + 1) * self.zsize;
-            let mut newfield = vec![T::default(); newsize];
-            for z_ in 0..self.zsize {
-                for y_ in 0..self.ysize {
-                    for x_ in 0..self.xsize {
-                        newfield[z_ * ((y + 1) * self.xsize) + y_ * self.xsize + x_] =
-                            self.get(x_, y_, z_);
+fn next_step(field: &InfiniteField3d<i64>) -> InfiniteField3d<i64> {
+    let mut newfield: InfiniteField3d<i64> = InfiniteField3d::new();
+    for x in field.xlims.0 - 1..=field.xlims.1 + 1 {
+        for y in field.ylims.0 - 1..=field.ylims.1 + 1 {
+            for z in field.zlims.0 - 1..=field.zlims.1 + 1 {
+                let num_neighbors = field.num_neighbors(x as isize, y as isize, z as isize);
+                if num_neighbors == 3 {
+                    newfield.set(x as isize, y as isize, z as isize, 1);
+                } else if (2..=3).contains(&num_neighbors) {
+                    if field.get(x as isize, y as isize, z as isize) == 1 {
+                        newfield.set(x as isize, y as isize, z as isize, 0);
                     }
+                } else {
+                    newfield.set(
+                        x as isize,
+                        y as isize,
+                        z as isize,
+                        field.get(x as isize, y as isize, z as isize),
+                    );
                 }
             }
-            self.field = newfield;
-            self.ysize = y + 1;
         }
-        // Expand in x direction
-        if x >= self.xsize {
-            let newsize = (x + 1) * self.ysize * self.zsize;
-            let mut newfield = vec![T::default(); newsize];
-            for z_ in 0..self.zsize {
-                for y_ in 0..self.ysize {
-                    for x_ in 0..self.xsize {
-                        newfield[z_ * (self.ysize * (x + 1)) + y_ * (x + 1) + x_] =
-                            self.get(x_, y_, z_);
-                    }
-                }
-            }
-            self.field = newfield;
-            self.xsize = x + 1;
-        }
-        self.field[z * self.ysize * self.xsize + y * self.xsize + x] = val;
     }
+    newfield
 }
 
-struct InfiniteField3d<T> {
-    quads: Vec<Quad3d<T>>,
+fn parse_input(input: &str) -> InfiniteField3d<i64> {
+    let mut field = InfiniteField3d::new();
+    for (lnum, line) in input.split('\n').enumerate() {
+        for (cnum, c) in line.trim().chars().enumerate() {
+            let vnum = match c {
+                '#' => 1,
+                '.' => 0,
+                _ => panic!(),
+            };
+            field.set(cnum as isize, lnum as isize, 0, vnum);
+        }
+    }
+    field
 }
 
-impl<T: Default + Copy> InfiniteField3d<T> {
-    pub fn new() -> Self {
-        let quads = vec![Quad3d::<T>::new(); 8];
-        Self { quads }
+fn day17a(input: &str) -> i64 {
+    let mut field = parse_input(&input);
+    for _ in 0..6 {
+        field = next_step(&field);
     }
+    field.sum()
+}
 
-    pub fn get(&self, x: isize, y: isize, z: isize) -> T {
-        let mut idx = 0;
-        if x < 0 {
-            idx += 1;
-        }
-        if y < 0 {
-            idx += 2;
-        }
-        if y < 0 {
-            idx += 4;
-        }
-        self.quads[idx].get(x.abs() as usize, y.abs() as usize, z.abs() as usize)
-    }
-
-    pub fn set(&mut self, x: isize, y: isize, z: isize, v: T) {
-        let mut idx = 0;
-        if x < 0 {
-            idx += 1;
-        }
-        if y < 0 {
-            idx += 2;
-        }
-        if y < 0 {
-            idx += 4;
-        }
-        self.quads[idx].set(x.abs() as usize, y.abs() as usize, z.abs() as usize, v);
+pub fn day17(input: &str, part: char) -> i64 {
+    match part {
+        'a' => day17a(input),
+        //'b' => day17b(input),
+        _ => 0,
     }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::day17;
-    use proptest::prelude::*;
 
     #[test]
     fn test_case() {
-        assert_eq!(1, 1);
-    }
-
-    proptest! {
-        #[test]
-        fn test_we_get_what_we_set_with_negs(x in -100isize..100,
-                                             y in -100isize..100,
-                                             z in -100isize..100,
-                                             x2 in -100isize..100,
-                                             y2 in -100isize..100,
-                                             z2 in -100isize..100,
-                                             v in 0i64..10000) {
-
-            let mut grid = day17::InfiniteField3d::<i64>::new();
-            grid.set(x,y,z,v);
-            prop_assert_eq!(grid.get(x,y,z), v);
-            grid.set(x2,y2,z2,v+1);
-            prop_assert_eq!(grid.get(x2,y2,z2), v+1);
-            prop_assert_eq!(grid.get(x,y,z), v);
+        let input = ".#.
+        ..#
+        ###"
+        .to_string();
+        let mut field = day17::parse_input(&input);
+        assert_eq!(field.sum(), 5);
+        for i in 0..6 {
+            field = day17::next_step(&field);
+            println!("Iteration {:?}: {:?}", i, field.sum());
+            for quad in &field.quads {
+                let sum: i64 = quad.field.iter().sum();
+            }
         }
+        println!("{}", field);
+        assert_eq!(field.sum(), 112);
     }
 }

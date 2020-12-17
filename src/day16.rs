@@ -233,7 +233,7 @@ fn day16b(input: &str) -> i64 {
         .zip(answers)
         .filter(|(_, s)| s.contains("departure"))
         .collect();
-    println!("{:?}", combos);
+    //println!("{:?}", combos);
     combos.iter().map(|(a, _)| a).product()
 }
 
