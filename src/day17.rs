@@ -8,7 +8,7 @@ fn next_step(field: &InfiniteField3d<i64>) -> InfiniteField3d<i64> {
                 let num_neighbors = field.num_neighbors(x as isize, y as isize, z as isize);
                 if num_neighbors == 3 {
                     newfield.set(x as isize, y as isize, z as isize, 1);
-                } else if (2..=3).contains(&num_neighbors) {
+                } else if !(2..=3).contains(&num_neighbors) {
                     if field.get(x as isize, y as isize, z as isize) == 1 {
                         newfield.set(x as isize, y as isize, z as isize, 0);
                     }
@@ -72,9 +72,6 @@ mod tests {
         for i in 0..6 {
             field = day17::next_step(&field);
             println!("Iteration {:?}: {:?}", i, field.sum());
-            for quad in &field.quads {
-                let sum: i64 = quad.field.iter().sum();
-            }
         }
         println!("{}", field);
         assert_eq!(field.sum(), 112);
