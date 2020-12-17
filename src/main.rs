@@ -114,14 +114,13 @@ fn main() {
     // Day 16
     let contents = util::load_contents("inputs/day16.txt");
     let a = day16::day16(&contents, 'a');
-    //let b = day16::day16(&lines, 'b');
+    //let b = day16::day16(&contents, 'b');
     let b = a;
     println!("Day 16: A: {:?}, B: {:?}", a, b);
 
     // Day 17
     let contents = util::load_contents("inputs/day17.txt");
     let a = day17::day17(&contents, 'a');
-    //let b = day16::day16(&lines, 'b');
-    let b = a;
+    let b = day17::day17(&contents, 'b');
     println!("Day 17: A: {:?}, B: {:?}", a, b);
 }
