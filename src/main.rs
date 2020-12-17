@@ -16,6 +16,7 @@ mod day15;
 mod day16;
 mod day17;
 mod infinite_field_3d;
+mod infinite_field_4d;
 mod util;
 
 fn main() {
