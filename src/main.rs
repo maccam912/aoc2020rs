@@ -1,3 +1,9 @@
+extern crate pest;
+#[macro_use]
+extern crate pest_derive;
+#[macro_use]
+extern crate lazy_static;
+
 mod day01;
 mod day02;
 mod day03;
@@ -15,6 +21,7 @@ mod day14;
 mod day15;
 mod day16;
 mod day17;
+mod day18;
 mod infinite_field_3d;
 mod infinite_field_4d;
 mod util;
@@ -123,4 +130,10 @@ fn main() {
     let a = day17::day17(&contents, 'a');
     let b = day17::day17(&contents, 'b');
     println!("Day 17: A: {:?}, B: {:?}", a, b);
+
+    // Day 18
+    let lines = util::load_strings("inputs/day18.txt");
+    let a = day18::day18(&lines, 'a');
+    let b = day18::day18(&lines, 'b');
+    println!("Day 18: A: {:?}, B: {:?}", a, b);
 }

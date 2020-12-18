@@ -1,0 +1,10 @@
+num = @{ ASCII_DIGIT+ }
+
+operation = _{ add | multiply }
+    add      = { "+" }
+    multiply = { "*" }
+
+expr = { term ~ (operation ~ term)* }
+term = _{ num | "(" ~ expr ~ ")" }
+
+WHITESPACE = _{ " " | "\t" }
