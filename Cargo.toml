@@ -12,6 +12,7 @@ regex = { version = "1.4", features = ["pattern"] }
 pest = "2.1"
 pest_derive = "2.1"
 lazy_static = "1.4"
+nom = "6"
 
 [dev-dependencies]
 proptest = "0.10.1"
