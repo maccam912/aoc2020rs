@@ -22,7 +22,7 @@ mod day15;
 mod day16;
 mod day17;
 mod day18;
-mod day19;
+mod day19nom;
 mod infinite_field_3d;
 mod infinite_field_4d;
 mod util;
