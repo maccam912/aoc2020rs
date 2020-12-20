@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
-use nom::{IResult, bytes::complete::tag, sequence::{pair, preceded, tuple}};
 use pest::{error::Error, iterators::Pairs, Parser};
+use regex::Regex;
 
 #[derive(Parser)]
-#[grammar = "day19test.pest"]
+#[grammar = "day19b.pest"]
 pub struct Day19Parser;
 
 pub fn parse_expr(s: &str) -> Result<Pairs<Rule>, Error<Rule>> {
@@ -13,9 +11,9 @@ pub fn parse_expr(s: &str) -> Result<Pairs<Rule>, Error<Rule>> {
 
 fn fix_name_or_lit(s: &str) -> String {
     if s == "\"a\"" {
-        return "\"a\"".to_string();
+        "\"a\"".to_string()
     } else if s == "\"b\"" {
-        return "\"b\"".to_string();
+        "\"b\"".to_string()
     } else {
         return format!("_{}", s);
     }
@@ -23,7 +21,10 @@ fn fix_name_or_lit(s: &str) -> String {
 
 fn and_str(s: &str) -> String {
     let parts = s.trim().split(' ');
-    parts.map(|x| fix_name_or_lit(x)).collect::<Vec<String>>().join(" ~ ")
+    parts
+        .map(|x| fix_name_or_lit(x))
+        .collect::<Vec<String>>()
+        .join(" ~ ")
 }
 
 fn parse_rule(s: &str) -> String {
@@ -49,62 +50,35 @@ fn parse_rules_to_pest(input: &str) -> String {
     newlines.join("\n")
 }
 
-fn parse_a(input: &str) -> IResult<&str, &str> {
-    tag("a")(input)
-}
-fn parse_b(input: &str) -> IResult<&str, &str> {
-    tag("b")(input)
-}
-
-type ParserFn<'a> = &'a dyn FnMut(&str) -> IResult<&str, &str>;
-
-fn all_rules_defined(rule: &str, rulemap: &HashMap<i64, ParserFn>) -> bool {
-    true
-}
-
-fn parse_and_rule(rule: &str, rulenum: i64, rulemap: &mut HashMap<i64, ParserFn>) {
-    let rules: Vec<&ParserFn> = rule.split(' ').map(|x| x.parse::<i64>().unwrap()).map(|x| rulemap.get(&x).unwrap()).collect();
-    let mut prevrule: ParserFn = rules[0];
-    for i in 1..rules.len() {
-        prevrule = &preceded(prevrule, rules[i]);
-    }
-    rulemap.insert(rulenum, prevrule);
-}
-
-fn parse_or_rule(rule: &str, rulemap: &mut HashMap<i64, ParserFn>) {
-    //and_rules
-}
-
-fn parse_rules_to_nom(lines: &str, rulemap: &mut HashMap<i64, ParserFn>) {
-    for line in lines.split('\n') {
-        let mut parts = line.split(':');
-        let rulenum = parts.next().unwrap().parse::<i64>().unwrap();
-        let rule = parts.next().unwrap().trim();
-        if rule == "\"a\"" {
-            rulemap.insert(rulenum, &parse_a);
-        } else if rule == "\"b\"" {
-            rulemap.insert(rulenum, &parse_b);
+fn split_ors(s: &str) -> String {
+    let mut newstr = String::new();
+    let re = Regex::new(r"^(?P<num>.+) = \{ (?P<a>[^|]+) \| (?P<b>[^|]+) \}$").unwrap();
+    for line in s.split('\n') {
+        if re.is_match(line) {
+            println!("{}", line);
+            let caps = re.captures(line).unwrap();
+            newstr.push_str(&format!("{} = {{ {} }}", &caps["num"], &caps["a"]));
+            newstr.push('\n');
+            newstr.push_str(&format!("{} = {{ {} }}", &caps["num"], &caps["b"]));
+            newstr.push('\n');
         } else {
-            if all_rules_defined(rule, &rulemap) {
-                if rule.contains('|') {
-                    //parse_or_rule(rule);
-                } else {
-                    parse_and_rule(rule, rulenum, rulemap);
-                }
-            }
+            newstr.push_str(line);
+            newstr.push('\n');
         }
     }
+    newstr
 }
 
 pub fn day19(contents: &str) -> i64 {
     let mut parts = contents.split("\n\n");
     let rules = parts.next().unwrap();
     let lines = parts.next().unwrap();
-    let mut rulemap: HashMap<i64, ParserFn> = HashMap::new();
-    parse_rules_to_nom(rules, &mut rulemap);
+    let pest_rules = split_ors(&parse_rules_to_pest(rules));
+    println!("{}", pest_rules);
+
     let mut sum = 0;
     for line in lines.split('\n') {
-        if rulemap.get(&14).unwrap()(line).is_ok() {
+        if parse_expr(line).is_ok() {
             sum += 1;
         }
     }
