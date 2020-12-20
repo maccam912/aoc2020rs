@@ -364,7 +364,7 @@ mod tests {
 
     #[test]
     fn test_case() {
-        let contents = util::load_contents("inputs/day20test.txt");
+        let contents = util::load_contents("inputs/day20test.test");
         let solutions = day20::solve(&contents);
         assert_eq!(solutions.len(), 8);
 
