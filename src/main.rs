@@ -23,6 +23,7 @@ mod day16;
 mod day17;
 mod day18;
 mod day19;
+mod day20;
 mod infinite_field_3d;
 mod infinite_field_4d;
 mod util;
@@ -139,7 +140,7 @@ fn main() {
     println!("Day 18: A: {:?}, B: {:?}", a, b);
 
     // Day 19
-    let contents = util::load_contents("inputs/day19test.txt");
+    let contents = util::load_contents("inputs/day19a.txt");
     let answer = day19::day19(&contents);
     println!("Day 19: Answer: {:?}", answer);
 }

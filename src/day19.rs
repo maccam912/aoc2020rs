@@ -2,7 +2,7 @@ use pest::{error::Error, iterators::Pairs, Parser};
 use regex::Regex;
 
 #[derive(Parser)]
-#[grammar = "day19b.pest"]
+#[grammar = "day19a.pest"]
 pub struct Day19Parser;
 
 pub fn parse_expr(s: &str) -> Result<Pairs<Rule>, Error<Rule>> {
