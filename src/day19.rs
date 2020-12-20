@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use pest::{error::Error, iterators::Pairs, Parser};
 use regex::Regex;
 
@@ -71,10 +73,10 @@ fn split_ors(s: &str) -> String {
 
 pub fn day19(contents: &str) -> i64 {
     let mut parts = contents.split("\n\n");
-    let rules = parts.next().unwrap();
+    let _rules = parts.next().unwrap();
     let lines = parts.next().unwrap();
-    let pest_rules = split_ors(&parse_rules_to_pest(rules));
-    println!("{}", pest_rules);
+    //let pest_rules = split_ors(&parse_rules_to_pest(rules));
+    //println!("{}", pest_rules);
 
     let mut sum = 0;
     for line in lines.split('\n') {

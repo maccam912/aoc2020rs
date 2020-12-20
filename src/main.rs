@@ -143,4 +143,10 @@ fn main() {
     let contents = util::load_contents("inputs/day19a.txt");
     let answer = day19::day19(&contents);
     println!("Day 19: Answer: {:?}", answer);
+
+    // Day 20
+    let contents = util::load_contents("inputs/day20.txt");
+    let a = day20::day20(&contents, 'a');
+    let b = day20::day20(&contents, 'b');
+    println!("Day 20: Answer: A: {:?}, B: {:?}", a, b);
 }

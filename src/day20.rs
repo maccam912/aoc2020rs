@@ -1,7 +1,10 @@
+#![allow(dead_code)]
+
+use num::integer::sqrt;
 use regex::Regex;
 
 #[derive(Debug, Clone)]
-struct Tile {
+pub struct Tile {
     id: i64,
     field: Vec<i8>,
     width: i64,
@@ -10,18 +13,24 @@ struct Tile {
 
 impl Tile {
     fn get(&self, x: usize, y: usize) -> i8 {
-        let idx = (y*self.width as usize)+x;
+        let idx = (y * self.width as usize) + x;
         self.field[idx]
     }
 
     fn rotate(&self) -> Tile {
         let mut newfield = Vec::new();
-        for x in (0..self.width as usize).rev() { // Go down right side, then one col left of that, etc.
+        for x in (0..self.width as usize).rev() {
+            // Go down right side, then one col left of that, etc.
             for y in 0..self.height as usize {
                 newfield.push(self.get(x, y));
             }
         }
-        Tile {id: self.id, field: newfield, width: self.width, height: self.height }
+        Tile {
+            id: self.id,
+            field: newfield,
+            width: self.width,
+            height: self.height,
+        }
     }
     fn flip(&self) -> Tile {
         let mut newfield = Vec::new();
@@ -30,7 +39,12 @@ impl Tile {
                 newfield.push(self.get(x, y));
             }
         }
-        Tile {id: self.id, field: newfield, width: self.width, height: self.height }
+        Tile {
+            id: self.id,
+            field: newfield,
+            width: self.width,
+            height: self.height,
+        }
     }
     fn variants(&self) -> Vec<Tile> {
         let mut tilevariants = vec![self.clone()];
@@ -49,6 +63,34 @@ impl Tile {
         let f1r3 = f1r2.rotate();
         tilevariants.push(f1r3);
         tilevariants
+    }
+    fn east(&self) -> Vec<i8> {
+        let mut border = Vec::new();
+        for i in 0..self.height as usize {
+            border.push(self.get(self.width as usize - 1, i));
+        }
+        border
+    }
+    fn west(&self) -> Vec<i8> {
+        let mut border = Vec::new();
+        for i in 0..self.height as usize {
+            border.push(self.get(0, i));
+        }
+        border
+    }
+    fn north(&self) -> Vec<i8> {
+        let mut border = Vec::new();
+        for i in 0..self.width as usize {
+            border.push(self.get(i, 0));
+        }
+        border
+    }
+    fn south(&self) -> Vec<i8> {
+        let mut border = Vec::new();
+        for i in 0..self.width as usize {
+            border.push(self.get(i, self.height as usize - 1));
+        }
+        border
     }
 }
 
@@ -74,9 +116,13 @@ fn parse_tile(s: &str) -> Tile {
             }
         }
     }
-    let height = (field.len() as i64)/width;
-    let t = Tile { id: tileid,  field, width, height };
-    t
+    let height = (field.len() as i64) / width;
+    Tile {
+        id: tileid,
+        field,
+        width,
+        height,
+    }
 }
 
 fn split_tiles(s: &str) -> Vec<Tile> {
@@ -88,122 +134,228 @@ fn split_tiles(s: &str) -> Vec<Tile> {
     tiles
 }
 
-fn id_int_str(id: i64, with_variants: bool) -> String {
-    match with_variants {
-        false => format!("{:?}", id),
-        true => {
-            let orig = id*10;
-            format!("{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}", orig, orig+1, orig+2, orig+3, orig+4, orig+5, orig+6, orig+7)
-        }
-    }
-}
-
-fn id_int_set(tiles: &[Tile], with_variants: bool) -> String {
-    let ints = tiles.into_iter().map(|x| id_int_str(x.id, with_variants)).collect::<Vec<String>>().join(", ");
-    format!("set of int: ID = {{ {} }};", ints)
-}
-
-fn tiles_line(tiles: &[Tile]) -> String {
-    let height_width = num::integer::sqrt(tiles.len());
-    format!("array[0..{:?},0..{:?}] of var ID: tiles; % tile at point (i,j)", height_width, height_width)
-}
-
-fn get_identifiers(tiles: &[Tile]) -> String {
-    let height_width = num::integer::sqrt(tiles.len());
-    let mut strs = Vec::new();
-    for x in 0..height_width {
-        for y in 0..height_width {
-            for dir in "nsew".chars() {
-                let tileborder = format!("{}_{:?}_{:?}", dir, x, y);
-                let varname = format!("{}borders", match dir {
-                    'n' => "north",
-                    'e' => "east",
-                    'w' => "west",
-                    's' => "south",
-                    _ => panic!(),
-                });
-                let str = format!("var int: {};", tileborder);
-                strs.push(str);
-            }
-        }
-    }
-    strs.join("\n")
-}
-
-fn get_border(tiles: &[Tile], x: usize, y: usize, dir: char) -> Vec<i8> {
+fn get_border(tiles: &[Tile], _x: usize, y: usize, dir: char) -> Vec<i8> {
     let height_width = num::integer::sqrt(tiles.len());
     let width: usize = tiles[0].width as usize;
-    let tile = &tiles[y*height_width+1];
+    let tile = &tiles[y * height_width + 1];
     match dir {
         'n' => tile.field[0..width].to_vec(),
-        's' => tile.field[(width*(width-1))..(width*width)].to_vec(),
+        's' => tile.field[(width * (width - 1))..(width * width)].to_vec(),
         'e' => tile.rotate().field[0..width].to_vec(),
-        'w' => tile.rotate().field[(width*(width-1))..(width*width)].to_vec(),
+        'w' => tile.rotate().field[(width * (width - 1))..(width * width)].to_vec(),
         _ => panic!(),
     }
 }
 
-fn border_set(tiles: &[Tile], dir: char) -> String {
-    let height_width = num::integer::sqrt(tiles.len());
-    let mut borderstrs = Vec::new();
-    for tilex in 0..height_width {
-        for tiley  in 0..height_width {
-            let border = get_border(tiles, tilex, tiley, dir);
-            let borderstr = format!("\"[{}]\"", border.iter().map(|x| format!("{}", x)).collect::<Vec<String>>().join(", "));
-            borderstrs.push(borderstr);
+fn find_match(
+    tiles: &[Tile],
+    acc: &mut Vec<Tile>,
+    idx: usize,
+    puzzle_width: usize,
+) -> Option<Vec<Tile>> {
+    if tiles.is_empty() {
+        return Some(acc.clone());
+    }
+    for (i, tile) in tiles.iter().enumerate() {
+        for variant in tile.variants() {
+            let side_is_ok = if idx % puzzle_width != 0 {
+                // Check my left border against tile west
+                let west_idx = idx - 1;
+                let west_tile = &acc[west_idx];
+                let neighbor_border = west_tile.east();
+                let my_border = variant.west();
+                neighbor_border == my_border
+            } else {
+                true
+            };
+
+            let top_is_ok = if idx >= puzzle_width {
+                // Check my north border against tile north
+                let north_idx = idx - puzzle_width;
+                let north_tile = &acc[north_idx];
+                let neighbor_border = north_tile.south();
+                let my_border = variant.north();
+                neighbor_border == my_border
+            } else {
+                true
+            };
+            if side_is_ok && top_is_ok {
+                // This tile is fine, recurse
+                let mut subtiles: Vec<Tile> = tiles.to_vec();
+                subtiles.remove(i);
+                let mut newacc = acc.clone();
+                newacc.push(variant);
+                let maybematch = find_match(&subtiles, &mut newacc, idx + 1, puzzle_width);
+                if maybematch.is_some() {
+                    return maybematch;
+                }
+            }
         }
     }
-
-    let varname = format!("{}borders", match dir {
-        'n' => "north",
-        'e' => "east",
-        's' => "south",
-        'w' => "west",
-        _ => panic!(),
-    });
-    format!("set of string: {} = {{ {} }};", varname, borderstrs.join(", "))
+    None
 }
 
-fn border_constraints(tiles: &[Tile]) -> String {
-    let height_width = num::integer::sqrt(tiles.len());
-    let mut constraints_lines = Vec::new();
-    for tilex in 0..height_width {
-        for tiley in 0..height_width {
-            let my_right = format!("e_{:?}_{:?}", tilex, tiley);
-            let my_bottom = format!("s_{:?}_{:?}", tilex, tiley);
-            let neighbors_left = format!("w_{:?}_{:?}", tilex+1, tiley);
-            let neighbors_top = format!("n_{:?}_{:?}", tilex, tiley+1);
-            if tilex < height_width-1 {
-                let line1 = format!("constraint eastborders[{}] == westborders[{}];", my_right, neighbors_left);
-                constraints_lines.push(line1);
-            }
-            if tiley < height_width-1 {
-                let line2 = format!("constraint southborders[{}] == northborders[{}];", my_bottom, neighbors_top);
-                constraints_lines.push(line2);
+fn solve(s: &str) -> Vec<Vec<Tile>> {
+    let tiles = split_tiles(s);
+    let puzzle_width = sqrt(tiles.len());
+    let mut answers = Vec::new();
+    for (i, tile) in tiles.iter().enumerate() {
+        for variant in tile.variants() {
+            let mut subtiles = tiles.clone();
+            subtiles.remove(i);
+            let answer = find_match(&subtiles, &mut vec![variant], 1, puzzle_width);
+            if let Some(a) = answer {
+                answers.push(a);
             }
         }
     }
-    constraints_lines.join("\n")
+    answers
 }
 
-fn imports() -> String {
-    "include \"alldifferent.mzn\";".to_string()
+fn day20a(s: &str) -> i64 {
+    let solutions = solve(s);
+    let first_answer = &solutions[0];
+    let width = sqrt(first_answer.len());
+    let tl = first_answer.first().unwrap().id;
+    let br = first_answer.last().unwrap().id;
+    let tr = first_answer.get(width - 1).unwrap().id;
+    let bl = first_answer.get(first_answer.len() - width).unwrap().id;
+    tl * br * tr * bl
 }
 
-fn minizinc_prog(tiles: &[Tile]) -> String {
-    let strs: Vec<String> = vec![
-        imports(),
-        border_set(tiles, 'n'),
-        border_set(tiles, 'e'),
-        border_set(tiles, 's'),
-        border_set(tiles, 'w'),
-        get_identifiers(tiles),
-        border_constraints(tiles),
-        id_int_set(tiles, true),
-        tiles_line(tiles),
-        "constraint alldifferent(tiles);".to_string(),
+#[derive(Debug)]
+struct Image {
+    field: Vec<i8>,
+    width: i64,
+    height: i64,
+}
+
+impl Image {
+    fn get(&self, x: usize, y: usize) -> i8 {
+        if x as i64 >= self.width || y as i64 >= self.height {
+            return 0;
+        }
+        let idx = y * self.width as usize + x;
+        self.field[idx]
+    }
+}
+
+fn squash_solution(v: &[Tile]) -> Image {
+    let mut field = Vec::new();
+    let tileinnerwidth = v[0].width - 2;
+    let newwidth = sqrt(v.len()) as i64 * tileinnerwidth;
+    for y in 0..newwidth {
+        for x in 0..newwidth {
+            // Get tile
+            let xtile = x / tileinnerwidth;
+            let ytile = y / tileinnerwidth;
+            let idx = ytile * sqrt(v.len()) as i64 + xtile;
+            let t: &Tile = &v[idx as usize];
+            let innerx = x % tileinnerwidth;
+            let innery = y % tileinnerwidth;
+            let c = t.get((innerx + 1) as usize, (innery + 1) as usize);
+            field.push(c);
+        }
+    }
+    assert_eq!(field.len(), newwidth as usize * newwidth as usize);
+    Image {
+        field,
+        width: newwidth,
+        height: newwidth,
+    }
+}
+
+fn check_for_monster(i: &Image, x: usize, y: usize) -> bool {
+    let coordslist = [
+        (18, 0),
+        (0, 1),
+        (5, 1),
+        (6, 1),
+        (11, 1),
+        (12, 1),
+        (17, 1),
+        (18, 1),
+        (19, 1),
+        (1, 2),
+        (4, 2),
+        (7, 2),
+        (10, 2),
+        (13, 2),
+        (16, 2),
     ];
-    strs.join("\n\n")
+    let sum: i64 = coordslist
+        .iter()
+        .map(|(xx, yy)| i.get(x + xx, y + yy) as i64)
+        .sum();
+    sum == coordslist.len() as i64
+}
+
+fn hide_monsters(i: &mut Image) {
+    let coordslist = [
+        (18, 0),
+        (0, 1),
+        (5, 1),
+        (6, 1),
+        (11, 1),
+        (12, 1),
+        (17, 1),
+        (18, 1),
+        (19, 1),
+        (1, 2),
+        (4, 2),
+        (7, 2),
+        (10, 2),
+        (13, 2),
+        (16, 2),
+    ];
+    for xx in 0..i.width {
+        for yy in 0..i.height {
+            if check_for_monster(&i, xx as usize, yy as usize) {
+                // Yep monster, set those to zeros.
+                for coord in &coordslist {
+                    let idx = (yy + coord.1) * i.width + xx + coord.0;
+                    i.field[idx as usize] = 0;
+                }
+            }
+        }
+    }
+}
+
+fn day20b(s: &str) -> i64 {
+    let mut monstercounts = Vec::new();
+    let solutions = solve(s);
+    for solution in &solutions {
+        let mut sum = 0;
+        let image = squash_solution(&solution);
+        for x in 0..image.width {
+            for y in 0..image.height {
+                if check_for_monster(&image, x as usize, y as usize) {
+                    sum += 1;
+                }
+            }
+        }
+        monstercounts.push(sum);
+    }
+    let mut maxidx = 0;
+    let mut maxmonstercount = 0;
+    for (i, monstercount) in monstercounts.iter().enumerate() {
+        if monstercount > &maxmonstercount {
+            maxmonstercount = *monstercount;
+            maxidx = i;
+        }
+    }
+    let mut maxcountsol = squash_solution(&solutions[maxidx]);
+    println!("{:?}", monstercounts);
+    hide_monsters(&mut maxcountsol);
+    maxcountsol.field.iter().map(|x| *x as i64).sum()
+}
+
+pub fn day20(s: &str, part: char) -> i64 {
+    match part {
+        'a' => day20a(s),
+        'b' => day20b(s),
+        _ => 0,
+    }
 }
 
 #[cfg(test)]
@@ -213,12 +365,10 @@ mod tests {
     #[test]
     fn test_case() {
         let contents = util::load_contents("inputs/day20test.txt");
-        let tiles = day20::split_tiles(&contents);
-        println!("{}", day20::minizinc_prog(&tiles));
-        assert_eq!(1, 2);
-        let variant_tiles: Vec<day20::Tile> = tiles.iter().flat_map(|t| t.variants()).collect();
-        assert_eq!(variant_tiles.len(), tiles.len()*8);
-        assert_eq!(variant_tiles[0].get(1, 1), variant_tiles[1].get(1, 8));
-        assert_eq!(variant_tiles[0].get(1, 1), variant_tiles[4].get(8, 1));
+        let solutions = day20::solve(&contents);
+        assert_eq!(solutions.len(), 8);
+
+        assert_eq!(day20::day20a(&contents), 20899048083289);
+        assert_eq!(day20::day20b(&contents), 273);
     }
 }
