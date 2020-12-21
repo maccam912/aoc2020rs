@@ -22,8 +22,9 @@ mod day15;
 mod day16;
 mod day17;
 mod day18;
-mod day19;
+//mod day19;
 mod day20;
+mod day21;
 mod infinite_field_3d;
 mod infinite_field_4d;
 mod util;
@@ -140,13 +141,24 @@ fn main() {
     println!("Day 18: A: {:?}, B: {:?}", a, b);
 
     // Day 19
-    let contents = util::load_contents("inputs/day19a.txt");
-    let answer = day19::day19(&contents);
-    println!("Day 19: Answer: {:?}", answer);
+    //let contents = util::load_contents("inputs/day19a.txt");
+    //let answer = day19::day19(&contents);
+    //println!("Day 19: Answer: {:?}", answer);
 
     // Day 20
-    let contents = util::load_contents("inputs/day20.txt");
-    let a = day20::day20(&contents, 'a');
-    let b = day20::day20(&contents, 'b');
-    println!("Day 20: Answer: A: {:?}, B: {:?}", a, b);
+    //let contents = util::load_contents("inputs/day20.txt");
+    //let a = day20::day20(&contents, 'a');
+    //let b = day20::day20(&contents, 'b');
+    //println!("Day 20: Answer: A: {:?}, B: {:?}", a, b);
+
+    //use std::fs::File;
+    //use std::io::prelude::*;
+
+    // Day 21
+    let contents = util::load_contents("inputs/day21.txt");
+    //let a = day21::gen_minizinc_prog(&contents);
+    //let mut file = File::create("day21.mzn").unwrap();
+    //file.write_all(a.as_bytes()).unwrap();
+    let a = day21::day21a(&contents);
+    println!("Day 21: A: {:?}", a);
 }
