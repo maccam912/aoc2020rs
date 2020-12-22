@@ -157,8 +157,6 @@ mod tests {
     #[test]
     fn test_case() {
         let contents = util::load_contents("inputs/day19test.test");
-        let mut parts = contents.split("\n\n");
-        let rules = parts.next().unwrap();
         let day19a = day19::day19(&contents, 'a');
         assert_eq!(day19a, 3);
         let day19b = day19::day19(&contents, 'b');

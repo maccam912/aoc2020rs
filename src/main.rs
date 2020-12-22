@@ -1,3 +1,5 @@
+#![feature(deque_range)]
+
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
@@ -25,6 +27,7 @@ mod day18;
 mod day19;
 mod day20;
 mod day21;
+mod day22;
 mod infinite_field_3d;
 mod infinite_field_4d;
 mod util;
@@ -162,4 +165,10 @@ fn main() {
     //file.write_all(a.as_bytes()).unwrap();
     let a = day21::day21a(&contents);
     println!("Day 21: A: {:?}", a);
+
+    // Day 22
+    let contents = util::load_contents("inputs/day22.txt");
+    let a = day22::day22(&contents, 'a');
+    let b = day22::day22(&contents, 'b');
+    println!("Day 22: A: {:?}, B: {:?}", a, b);
 }
