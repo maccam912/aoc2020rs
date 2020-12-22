@@ -345,7 +345,7 @@ fn day20b(s: &str) -> i64 {
         }
     }
     let mut maxcountsol = squash_solution(&solutions[maxidx]);
-    println!("{:?}", monstercounts);
+    //println!("{:?}", monstercounts);
     hide_monsters(&mut maxcountsol);
     maxcountsol.field.iter().map(|x| *x as i64).sum()
 }

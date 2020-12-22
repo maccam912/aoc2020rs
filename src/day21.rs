@@ -8,7 +8,7 @@ use crate::util;
 
 fn parse_allergens(s: &str) -> Vec<String> {
     let re = Regex::new(r"\(contains (?P<allergens_list>.*)\)$").unwrap();
-    println!("{:?}", s);
+    //println!("{:?}", s);
     let caps = re.captures(s).unwrap();
     caps["allergens_list"]
         .split(", ")
@@ -18,7 +18,7 @@ fn parse_allergens(s: &str) -> Vec<String> {
 
 fn parse_ingredients(s: &str) -> Vec<String> {
     let re = Regex::new(r"^(?P<ingredients_list>.*) \(contains .*\)$").unwrap();
-    println!("{:?}", s);
+    //println!("{:?}", s);
     let caps = re.captures(s).unwrap();
     caps["ingredients_list"]
         .split(' ')
