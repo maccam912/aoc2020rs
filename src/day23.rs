@@ -1,11 +1,9 @@
-use std::{cell::RefCell, collections::{HashMap, VecDeque}, rc::Rc};
+use std::collections::VecDeque;
 
-const MY_INPUT: &str = "643719258";
-
-fn setup_game(s: &str) -> (u8, VecDeque<u8>) {
+fn setup_game(s: &str) -> (i64, VecDeque<i64>) {
     let mut cups = VecDeque::new();
     for c in s.chars() {
-        let cupnum = c.to_digit(10).unwrap() as u8;
+        let cupnum = c.to_digit(10).unwrap() as i64;
         cups.push_back(cupnum);
     }
 
@@ -13,53 +11,57 @@ fn setup_game(s: &str) -> (u8, VecDeque<u8>) {
     (*current_cup, cups)
 }
 
-fn get_idx_of(num: u8, v: &VecDeque<u8>) -> usize {
+fn get_idx_of(num: i64, v: &VecDeque<i64>) -> i64 {
     for (i, _num) in v.iter().enumerate() {
         if *_num == num {
-            return i;
+            return i as i64;
         }
     }
-    99
+    -1
 }
 
-fn run_game(_current_cup: u8, cups: &mut VecDeque<u8>) {
+fn run_game(_current_cup: i64, cups: &mut VecDeque<i64>) -> String {
     let mut current_cup = _current_cup;
-    for _ in 0..100 {
+    for i in 0..100 {
+        println!("Move {:?}", i + 1);
         let idx = get_idx_of(current_cup, cups);
-        println!("1: Length {:?} mid {:?}", cups.len(), idx);
-        cups.rotate_left(idx);
+        cups.rotate_left(idx as usize);
+        println!("cups: {:?}", cups);
         let a = cups.remove(1).unwrap();
         let b = cups.remove(1).unwrap();
         let c = cups.remove(1).unwrap();
-        let mut nextcup = (current_cup-1).rem_euclid(9);
-        while [a, b, c].contains(&nextcup) {
-            nextcup = (nextcup-1).rem_euclid(9);
-        }
+        println!("Pick up: {:?},{:?},{:?}", a, b, c);
+        let mut nextcup = (current_cup - 1).rem_euclid(9);
         if nextcup == 0 {
             nextcup = 9;
         }
+        while [a, b, c].contains(&nextcup) {
+            nextcup = (nextcup - 1).rem_euclid(9);
+            if nextcup == 0 {
+                nextcup = 9;
+            }
+        }
+        println!("Destionation: {:?}", nextcup);
         let next_idx = get_idx_of(nextcup, cups);
-        println!("2: Length {:?} mid {:?}", cups.len(), next_idx);
-        cups.rotate_left(next_idx);
-        cups.insert(1, a);
-        cups.insert(1, b);
+        cups.rotate_left(next_idx as usize);
         cups.insert(1, c);
+        cups.insert(1, b);
+        cups.insert(1, a);
         let idx = get_idx_of(current_cup, cups);
-        let next_idx = (idx+1) % 9;
-        current_cup = *cups.get(next_idx).unwrap();
+        let next_idx = (idx + 1) % 9;
+        current_cup = *cups.get(next_idx as usize).unwrap();
     }
 
     let oneidx = get_idx_of(1, cups);
-    println!("3: Length {:?} mid {:?}", cups.len(), oneidx);
-    cups.rotate_left(oneidx);
-    let order: Vec<u8> = cups.range(1..cups.len()).copied().collect();
-    println!("{:?}", order);
+    cups.rotate_left(oneidx as usize);
+    let order: Vec<i64> = cups.range(1..cups.len()).copied().collect();
+    let s: String = order.iter().map(|x| format!("{:?}", x)).collect();
+    s
 }
 
-fn day23a() -> i64 {
-    let (i, mut cups) = setup_game(MY_INPUT);
-    run_game(i, &mut cups);
-    0
+pub fn day23a(s: &str) -> i64 {
+    let (i, mut cups) = setup_game(s);
+    run_game(i, &mut cups).parse::<i64>().unwrap()
 }
 
 #[cfg(test)]
@@ -68,6 +70,6 @@ mod tests {
 
     #[test]
     fn test_case() {
-        day23::day23a();
+        assert_eq!(day23::day23a("389125467"), 67384529);
     }
 }
