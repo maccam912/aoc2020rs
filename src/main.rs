@@ -207,7 +207,8 @@ fn main() {
         23 => {
             // Day 23
             let a = day23::day23a("643719258");
-            println!("Day 23: A: {:?}", a);
+            let b = day23::day23b("643719258");
+            println!("Day 23: A: {:?}, B: {:?}", a, b);
         }
         _ => panic!(format!(
             "Cannot run day {:?}, it doesn't exist maybe?",

@@ -1,31 +1,48 @@
-use std::collections::VecDeque;
-
-fn setup_game(s: &str, part: char) -> (i64, VecDeque<i64>) {
-    let mut cups = VecDeque::new();
-    for c in s.chars() {
-        let cupnum = c.to_digit(10).unwrap() as i64;
-        cups.push_back(cupnum);
+fn setup_game(s: &str, part: char) -> (usize, Vec<usize>) {
+    let cupslen = match part {
+        'a' => s.len(),
+        'b' => 1000000,
+        _ => panic!("Only parts a and b are allowed"),
+    };
+    let mut cups: Vec<usize> = vec![0; cupslen + 1];
+    let chars: Vec<char> = s.chars().collect();
+    for i in 1..s.len() {
+        let cupnum = chars[i - 1].to_digit(10).unwrap();
+        let nextcup = chars[i].to_digit(10).unwrap();
+        cups[cupnum as usize] = nextcup as usize;
+    }
+    if part == 'a' {
+        let cupnum = chars[s.len() - 1].to_digit(10).unwrap();
+        let nextcup = chars[0].to_digit(10).unwrap();
+        cups[cupnum as usize] = nextcup as usize;
     }
     if part == 'b' {
+        let cupnum = chars[s.len() - 1].to_digit(10).unwrap();
+        cups[cupnum as usize] = 10;
         // Add nums 10 through 1000000
-        for n in 10 ..=1000000 {
-            cups.push_back(n);
+        for (n, cup) in cups.iter_mut().enumerate().take(1000000).skip(10) {
+            *cup = (n + 1) as usize;
         }
+        cups[1000000] = chars[0].to_digit(10).unwrap() as usize;
     }
-    let current_cup = &cups[0];
-    (*current_cup, cups)
+    let current_cup = s.chars().next().unwrap().to_digit(10).unwrap();
+    (current_cup as usize, cups)
 }
 
-fn get_idx_of(num: i64, v: &VecDeque<i64>) -> i64 {
-    for (i, _num) in v.iter().enumerate() {
-        if *_num == num {
-            return i as i64;
-        }
-    }
-    -1
-}
+// fn print_cups(orig_cup: usize, cups: &[usize]) -> String {
+//     let mut current_cup = orig_cup;
+//     let mut strings = Vec::new();
+//     let mut count = 0;
+//     while cups[current_cup] != orig_cup && count < 12 {
+//         strings.push(format!("{:?}", current_cup));
+//         current_cup = cups[current_cup];
+//         count += 1;
+//     }
+//     strings.push(format!("{:?}", current_cup));
+//     strings.join(" ")
+// }
 
-fn run_game(_current_cup: i64, cups: &mut VecDeque<i64>, part: char) -> String {
+fn run_game(_current_cup: usize, cups: &mut Vec<usize>, part: char) -> String {
     let mut current_cup = _current_cup;
     let numsteps = match part {
         'a' => 100,
@@ -33,40 +50,60 @@ fn run_game(_current_cup: i64, cups: &mut VecDeque<i64>, part: char) -> String {
         _ => panic!("Only parts a and b are allowed."),
     };
     for _ in 0..numsteps {
-        //println!("Move {:?}", i + 1);
-        let idx = get_idx_of(current_cup, cups);
-        cups.rotate_left(idx as usize);
-        //println!("cups: {:?}", cups);
-        let a = cups.remove(1).unwrap();
-        let b = cups.remove(1).unwrap();
-        let c = cups.remove(1).unwrap();
-        //println!("Pick up: {:?},{:?},{:?}", a, b, c);
-        let mut nextcup = (current_cup - 1).rem_euclid(9);
-        if nextcup == 0 {
-            nextcup = 9;
+        // Get next three after current cup
+        let a = cups[current_cup];
+        let b = cups[a];
+        let c = cups[b];
+        // Get one after C. current_cup should point to there next
+        let next = cups[c];
+        cups[current_cup] = next;
+
+        let mut destination_cup = current_cup.checked_sub(1).unwrap();
+        if destination_cup == 0 {
+            destination_cup = match part {
+                'a' => 9,
+                'b' => 1000000,
+                _ => panic!("Only part a or b allowed"),
+            };
         }
-        while [a, b, c].contains(&nextcup) {
-            nextcup = (nextcup - 1).rem_euclid(9);
-            if nextcup == 0 {
-                nextcup = 9;
+        while [a, b, c].contains(&destination_cup) {
+            destination_cup = destination_cup.checked_sub(1).unwrap();
+            if destination_cup == 0 {
+                destination_cup = match part {
+                    'a' => 9,
+                    'b' => 1000000,
+                    _ => panic!("Only part a or b allowed"),
+                };
             }
         }
-        //println!("Destionation: {:?}", nextcup);
-        let next_idx = get_idx_of(nextcup, cups);
-        cups.rotate_left(next_idx as usize);
-        cups.insert(1, c);
-        cups.insert(1, b);
-        cups.insert(1, a);
-        let idx = get_idx_of(current_cup, cups);
-        let next_idx = (idx + 1) % 9;
-        current_cup = *cups.get(next_idx as usize).unwrap();
+        // destination_cup now is our destination, put abc in there
+        let cnext = cups[destination_cup];
+        cups[destination_cup] = a;
+        // These didn't change
+        // cups[a] = b;
+        // cups[b] = c;
+        cups[c] = cnext;
+        current_cup = cups[current_cup];
     }
 
-    let oneidx = get_idx_of(1, cups);
-    cups.rotate_left(oneidx as usize);
-    let order: Vec<i64> = cups.range(1..cups.len()).copied().collect();
-    let s: String = order.iter().map(|x| format!("{:?}", x)).collect();
-    s
+    match part {
+        'a' => {
+            // Get everything after 1, put it into a string.
+            let mut n = cups[1];
+            let mut s = String::new();
+            while n != 1 {
+                s.push_str(&format!("{:?}", n));
+                n = cups[n];
+            }
+            s
+        }
+        'b' => {
+            let a = cups[1];
+            let b = cups[a];
+            format!("{:?}", a * b)
+        }
+        _ => panic!("Only parts a and b are allowed"),
+    }
 }
 
 pub fn day23a(s: &str) -> i64 {
@@ -84,7 +121,12 @@ mod tests {
     use crate::day23;
 
     #[test]
-    fn test_case() {
+    fn test_case_a() {
         assert_eq!(day23::day23a("389125467"), 67384529);
+    }
+
+    #[test]
+    fn test_case_b() {
+        assert_eq!(day23::day23b("389125467"), 149245887792);
     }
 }
