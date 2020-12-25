@@ -31,6 +31,7 @@ mod day20;
 mod day21;
 mod day22;
 mod day23;
+mod day24;
 mod infinite_field_3d;
 mod infinite_field_4d;
 mod util;
@@ -209,6 +210,12 @@ fn main() {
             let a = day23::day23a("643719258");
             let b = day23::day23b("643719258");
             println!("Day 23: A: {:?}, B: {:?}", a, b);
+        }
+        24 => {
+            // Day 24
+            let lines = util::load_strings("inputs/day24.txt");
+            let a = day24::day24a(&lines);
+            println!("Day 24: A: {:?}", a);
         }
         _ => panic!(format!(
             "Cannot run day {:?}, it doesn't exist maybe?",
