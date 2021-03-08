@@ -12,7 +12,7 @@ regex = { version = "1.4", features = ["pattern"] }
 pest = "2.1"
 pest_derive = "2.1"
 lazy_static = "1.4"
-num = "0.3"
+num = "0.4"
 structopt = "0.3"
 nom = "6"
 
