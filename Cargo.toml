@@ -17,7 +17,7 @@ structopt = "0.3"
 nom = "7"
 
 [dev-dependencies]
-proptest = "1.0.0"
+proptest = "1.1.0"
 
 [profile.release]
 debug = true
