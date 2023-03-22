@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 itertools = "0.10"
-regex = { version = "1.6", features = ["pattern"] }
+regex = { version = "1.7", features = ["pattern"] }
 pest = "2.4"
 pest_derive = "2.1"
 lazy_static = "1.4"
